@@ -25,7 +25,7 @@ Question 3 part c)
 ------------------------------------------------------------------------------------------------------------------------
 """
 # Iterative Approach chosen over recursive to find upper-managers of a manager
-def find_all_eligible_managers(employee_relationship_table, employeeId, risk):
+def find_all_eligible_managers(employeeId, risk):
     eligible_managers = []
     if risk == 'L':
         #return just the author/employee
@@ -52,7 +52,7 @@ def find_all_eligible_managers(employee_relationship_table, employeeId, risk):
         eligible_managers = list(set(eligible_managers))
     return eligible_managers
 
-def prettyprint_testplan_phases(testplan_phase_table, employee_relationship_table, testplanId):
+def prettyprint_testplan_phases(testplanId):
     #find the index where table.testplanId == testplanId
     indicies = [idx for idx, elem in enumerate(testplan_phase_table.testplanIds) if elem == testplanId]
     if indicies is None:
@@ -63,7 +63,7 @@ def prettyprint_testplan_phases(testplan_phase_table, employee_relationship_tabl
     for idx in indicies:
         #if unapproved, return all eligible managers
         if not testplan_phase_table.isApproved[idx]:
-            eligible_managers = find_all_eligible_managers(employee_relationship_table, testplan_phase_table.employeeIds[idx], testplan_phase_table.risks[idx])
+            eligible_managers = find_all_eligible_managers(testplan_phase_table.employeeIds[idx], testplan_phase_table.risks[idx])
         #else if approved, return the approval manager
         else:
             eligible_managers = [testplan_phase_table.approvedBy[idx]]
@@ -78,7 +78,7 @@ def prettyprint_testplan_phases(testplan_phase_table, employee_relationship_tabl
 Question 3 part d)
 ------------------------------------------------------------------------------------------------------------------------
 """
-def approve_phase_testplan(testplan_phase_table, employee_relationship_table, testplanId, phase, approverId):
+def approve_phase_testplan(testplanId, phase, approverId):
     #check whether this phase of this testplanId is unapproved first
     valid = False
     idx, employeeId, risk = None, None, None
@@ -93,10 +93,11 @@ def approve_phase_testplan(testplan_phase_table, employee_relationship_table, te
 
     # print(f"index: {idx}, employeeId: {employeeId}, risk: {risk}")
     #check if approverId is a valid approver, if so, approve
-    eligible_approvers = find_all_eligible_managers(employee_relationship_table, employeeId, risk)
+    eligible_approvers = find_all_eligible_managers(employeeId, risk)
     if approverId in eligible_approvers:
         testplan_phase_table.isApproved[idx] = True
         testplan_phase_table.approvedBy[idx] = approverId
+        print(f"Testplan {testplanId} successfully approved by {approverId}.")
     else:
         print("ApproverId is not valid to approve this phase and testplan.")
 
@@ -106,7 +107,7 @@ Question 3 part e)
 ------------------------------------------------------------------------------------------------------------------------
 """
 #Function to get the CEO node
-def get_CEO(employee_relationship_table, employee_table):
+def get_CEO():
     #CEO should be the only node in the graph that doesn't have any outgoing edges
     edges = []
     for e, m in zip(employee_relationship_table.employeeIds, employee_relationship_table.managerIds):
@@ -127,9 +128,9 @@ def get_CEO(employee_relationship_table, employee_table):
             return i
 
 #BFS returns optimal solution for shortest path, unlike DFS
-def shortest_path_to_CEO(employee_relationship_table, employee_table, employeeId):
+def shortest_path_to_CEO(employeeId):
     #get CEO node
-    ceo = get_CEO(employee_relationship_table, employee_table)
+    ceo = get_CEO()
     print(f"CEO is employee: {ceo}")
     #keep track of visited employees
     visited = {}
@@ -137,7 +138,7 @@ def shortest_path_to_CEO(employee_relationship_table, employee_table, employeeId
 
     #start node is the CEO, return CEO
     if employeeId == ceo:
-        print(f"Shortest path to CEO: {employeeId}")
+        print(f"This employee is the CEO")
         return employeeId
 
     while queue:
@@ -146,7 +147,7 @@ def shortest_path_to_CEO(employee_relationship_table, employee_table, employeeId
         employee = path[-1]
         #found path to CEO
         if employee == ceo:
-            print(f"Shortest path to CEO: {path}")
+            print(f"Shortest path to CEO from employee {employeeId} is: {path}")
             return path
 
         #otherwise, check all other paths
@@ -174,19 +175,19 @@ if __name__ == "__main__":
     print("Question 3 part c")
     print("--------------------------------------------------------------------------------------------------")
     #pretty print a testplan and its phases
-    testplanIdToTest = 1
-    prettyprint_testplan_phases(testplan_phase_table, employee_relationship_table, testplanIdToTest)
+    testplanIdToTest = 3
+    prettyprint_testplan_phases(testplanIdToTest)
 
     print("--------------------------------------------------------------------------------------------------")
     print("Question 3 part d")
     print("--------------------------------------------------------------------------------------------------")
     testplanIdToTest, phase, approverId = 3, 'D', 4
     print(f"TestplanPhase Table Before: {testplan_phase_table.approvedBy}")
-    approve_phase_testplan(testplan_phase_table, employee_relationship_table, testplanIdToTest, phase, approverId)
+    approve_phase_testplan(testplanIdToTest, phase, approverId)
     print(f"TestplanPhase Table After: {testplan_phase_table.approvedBy}")
 
     print("--------------------------------------------------------------------------------------------------")
     print("Question 3 part e")
     print("--------------------------------------------------------------------------------------------------")
-    employeeId = 4
-    shortest_path_to_CEO(employee_relationship_table, employee_table, employeeId)
+    employeeId = 2
+    shortest_path_to_CEO(employeeId)
