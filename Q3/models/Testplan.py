@@ -3,5 +3,6 @@ class Testplan:
         self.testplanIds = data['testplanId']
         self.testplanNames = data['testplanName']
 
-    def get_testplans(self):
-        pass
+    def add_testplan(self, testplan):
+        self.testplanIds.append(testplan.testplanId)
+        self.testplanNames.append(testplan.testplanName)

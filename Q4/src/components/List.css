@@ -3,6 +3,12 @@
     width: 100%;
 }
 
+.list-wrapper {
+    margin: 0 auto;
+    width: 350px;
+    height: 100%;
+}
+
 .list {
     margin: 0 auto;
     width: 350px;

@@ -14,8 +14,27 @@ const List = (props) => {
         console.log(showDropdown)
     }
 
+    //handle clicking outside to toggle dropdown
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            //if the dropdown is active AND click was outside of dropdown element
+            if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+                setShowDropdown(false)
+                console.log(showDropdown)
+            }
+        };
+
+        //only if dropdown is shown, listen for clicks
+        if (showDropdown) {
+            document.addEventListener('click', handleClickOutside, true);
+        }
+        return () => {
+            document.removeEventListener('click', handleClickOutside, true);
+        }
+    }, [showDropdown]);
+
     return (
-        <div>
+        <div className='list-wrapper' ref={dropdownRef}>
             <div className="list" onClick={toggle}>
                 <div className='list-body' >
                     <ul>
@@ -25,12 +44,13 @@ const List = (props) => {
                 </div>
             </div>
             {showDropdown ? (
-                <div className='card-container'>
-                    <Card item={item} show={showDropdown} innerRef={dropdownRef} onClickOutside={() => {setShowDropdown(false)}} />
+                <div className='card-wrapper'>
+                    <div className='card-container'>
+                        <Card item={item} />
+                    </div>
                 </div>
             ) : (null)
             }
-
         </div>
     )
 }

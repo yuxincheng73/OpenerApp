@@ -1,6 +1,7 @@
 import React from 'react'
 import List from './List';
 import './SearchList.css';
+import './List.css';
 
 const SearchList = ({ filteredData }) => {
     return (
